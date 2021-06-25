@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-masterBranch="master"
+masterBranch=`git branch | cut -c 3- | grep -E '^master$|^main$'`
 
 if [[ "$1" = "--h" ]] ; then
    echo "Finishing up feature and issue branches: ";
@@ -44,7 +44,7 @@ if [[ "$(git branch -a | egrep "remotes/origin/$1" | wc -l)" = "1" ]]; then
             Yes ) echo "Cleaning up remote branch"; git push origin :$1; break;;
             No ) break;;
         esac
-    done	
+    done
 fi
 }
 
@@ -55,7 +55,7 @@ originUrl=$(git config --get remote.origin.url)
 vsoRegex=".visualstudio.com"
 if [[ "$originUrl" =~ $vsoRegex ]] ; then
    originUrl="$originUrl/pullrequestcreate?targetRef=master&sourceRef=$1"
-fi	
+fi
 
 case $( uname -s ) in
   Darwin)  open='open';;
@@ -86,25 +86,25 @@ git push --follow-tags origin $1
 if [[ $branch =~ ^(feature|issue).* ]]; then
     echo Pulling latest $masterBranch from origin
 	git pull origin $masterBranch:$masterBranch
-	
+
     echo Rebasing branch using $masterBranch
-	git rebase -i $masterBranch		
+	git rebase -i $masterBranch
 elif [[ $branch =~ ^(release|hotfix).* ]]; then
     echo Tagging release branch
-	
+
 	if [ "$1" = "" ]; then
 		git tag V$shortBranch
 	else
 		git tag -a V$shortBranch -m "$1"
-	fi	
-else 
+	fi
+else
 	echo "Currently not on a feature/issue/release/hotfix branch";
 	exit 1;
 fi
 
 git checkout $masterBranch
 
-if [[ $branch =~ ^feature.* ]]; then	
+if [[ $branch =~ ^feature.* ]]; then
 	echo "Do you wish to: "
 	select opt in "Merge to $masterBranch" "Create a pull request"; do
 		case $opt in
