@@ -7,4 +7,4 @@ if [[ "$1" = "--h" ]] ; then
    exit 1;
 fi
 
-echo "V1.0"
+echo "V1.1"

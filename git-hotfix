@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-masterBranch=`git branch -rl '*/HEAD' | grep -o '[^/]\+$'`
+masterBranch=`git branch -rl "*/HEAD" | rev | cut -d/ -f1 | rev`
 
 ((!$#)) && echo No hotfix name, command ignored! && echo "  - git hotfix <version> <tag>" && exit 1
 
